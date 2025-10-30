@@ -65,6 +65,7 @@ export const envs: IAppConfig = {
   node_env: getOptionalEnv("NODE_ENV", "development") as NodeEnv,
   port: getAsInt("PORT", 5002),
   database_url: getRequiredEnv("DATABASE_URL"),
+  redis_url: getRequiredEnv("REDIS_URL"),
 
   // // --- Authentication ---
   // bcrypt_salt_rounds: getAsInt("BCRYPT_SALT_ROUNDS", 10),
