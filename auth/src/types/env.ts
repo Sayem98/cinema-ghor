@@ -4,6 +4,7 @@ export type IAppConfig = {
   node_env: NodeEnv;
   port: number;
   database_url: string;
+  redis_url: string;
   // bcrypt_salt_rounds: number;
   // default_password: string;
 

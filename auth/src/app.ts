@@ -11,10 +11,32 @@ import mongoSanitize from "express-mongo-sanitize";
 import { xssSanitizer } from "./utils/xss";
 import hpp from "hpp";
 import cookieParser from "cookie-parser";
+import { createBullBoard } from "@bull-board/api";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
+import { ExpressAdapter } from "@bull-board/express";
+import { deadLetterQueue } from "./queues";
+import { notificationQueue } from "./queues";
 
 const nodeEnv = envs.node_env || "development";
 
 const app: Express = express();
+
+const serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath("/admin/queues");
+
+//  Create the board and add your queues
+createBullBoard({
+  queues: [
+    new BullMQAdapter(deadLetterQueue),
+    // new BullMQAdapter(emailQueue.queue),
+    // new BullMQAdapter(reportQueue.queue),
+    new BullMQAdapter(notificationQueue.queue),
+  ],
+  serverAdapter: serverAdapter,
+});
+
+//Attach the adapter's router to your express app
+app.use("/admin/queues", serverAdapter.getRouter());
 
 if (nodeEnv === "production") {
   // Production: Use the file/Winston-piped logger (from the file above)
